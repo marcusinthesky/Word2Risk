@@ -38,7 +38,7 @@ class MoneywebSensSpider(scrapy.Spider):
         date = item['date']
         section = 'sens'
         title = response.css('h1::text').extract_first()
-        texts = '-'.join(list(map(lambda x: x.strip(),response.css('p::text').extract()[:-12])))
+        texts = '-'.join(list(map(lambda x: x.strip(),response.css('p::text').extract()[2:-12])))
         yield {
             'title':title, 
             'section':section,

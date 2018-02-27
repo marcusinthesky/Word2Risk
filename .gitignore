@@ -6,3 +6,9 @@ $ git status
 *.jsonlines
 *.hdf5
 *.h5
+*.txt
+*.npy
+*.mm
+*.mm.index
+*.dict
+data/
