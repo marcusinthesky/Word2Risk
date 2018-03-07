@@ -12,3 +12,4 @@ $ git status
 *.mm.index
 *.dict
 data/
+*/store/
