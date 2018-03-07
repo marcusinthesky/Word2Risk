@@ -17,7 +17,7 @@ A YAML file is used to specify the packages used in this project and can be foun
   
   
 ### JupyterLab
-The project was made in JupyterLab, using an Ipython Notebook.  This allows for python code and natural text in python and [markdown](https://daringfireball.net/projects/markdown/basics) codechunks, which can be exported to a range of formats including latex and html.  
+The project was made in JupyterLab, using an Ipython Notebook.  This allows for python code and markup[markdown] (https://daringfireball.net/projects/markdown/basics) codechunks, in python which can be exported to a range of formats including latex and html.  
 [Jupyterlab Documentation](http://jupyterlab-tutorial.readthedocs.io/en/latest/)  
   
   
