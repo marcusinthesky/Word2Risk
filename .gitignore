@@ -13,3 +13,4 @@ $ git status
 *.dict
 data/
 */store/
+./notes/
