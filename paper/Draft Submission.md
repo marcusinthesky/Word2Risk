@@ -2,9 +2,9 @@
 title: "Association-Risk: An Alternative Use for Natural Language Processing on the Johannesburg Stock Exchange (JSE)"
 
 author:
+- Robert Brink
 - Marcus Gawronsky
 - Christpher Kleweg
-- Robert Brink
 - Ryan Kruger
 
 date: 19 September 2018
@@ -18,7 +18,7 @@ abstract: A recent topic of interest in the realm of financial research has been
 With the ever-increasing availability of qualitative financial information in the form of news articles, blog posts, message boards and financially based social networks investors are no longer able to efficiently monitor and process massive amounts of unstructured data [@Tirunillai2012]. @Engelberg2008 observes that whilst some financial information is still quickly incorporated into markets due to its ease of understanding, investors tend to under-react to new information that may be more ambiguous or costly to process. As a result, a central focus of Natural Language Processing in the financial domain thus far has been sentiment analysis, providing hedge fund managers with a tool in efficiently processing information and hence the ability to profit on potential market inefficiencies. [@Engelberg2008]. In practice however, using sentiment analysis to predict stock prices has shown limited success as ambiguity and implicitly expressed sentiment remain challenging for computer algorithms to interpret. While NLP tools may not be exceptionally accurate at predicting sentiment, they are extremely good at making associations between words and their contexts in text data. Therefore, this paper presents an alternative use case of NLP in predicting association risk of companies within a portfolio on the Johannesburg Stock Exchange (JSE). 
   
 
-A widely debated topic in the field of financial research concerns the measurement of financial risk. The Capital Asset Pricing Model (CAPM) remains at the core of modern financial theory some 50 years after its initial development by providing investors with a framework in determining how the expected return of an investment is affected but its risk. Central to the CAPM model is the assumption of efficient markets, whereby investors are able to fully diversify away non-systematic risk leaving systematic risk, represented by Beta, as the sole risk determinant in calculating returns [@Strugnell2015]. Given markets are shown not to be efficient in practice, we can conclude that non-systematic risk is in fact a determinant of market returns. This is supported by existing literature identifying non-systematic anomalies such as the size effect [@Banz1981] and value effect [@Basu1983], both of which are shown to have reliable predictive power in explaining returns.  Sources of non-systematic risk can be difficult to quantify, but may relate to the extent to which a portfolio is diversified.  While investors may choose to diversify across a number of metrics present in the literature such as size, value or leverage, the degree of  association between companies remains a critical metric reliant on analyst insights.  Association can come from companies sharing similar industries, sentiment, status, position in analyst insight or subsidiary relationship.  One challenge is how to both extract and quantify these measures in a way that is both unbiased, scalable and computationally tractable.  We propose a method, using dynamic document-vectors learned from a corpus derived from a 30-day news cycles in order to quantify the association between companies in a portfolio.  
+A widely debated topic in the field of financial research concerns the measurement of financial risk. The Capital Asset Pricing Model (CAPM) remains at the core of modern financial theory some 50 years after its initial development by providing investors with a framework in determining how the expected return of an investment is affected by its risk. Central to the CAPM model is the assumption of efficient markets, whereby investors are able to fully diversify away non-systematic risk leaving systematic risk, represented by Beta, as the sole risk determinant in calculating returns [@Strugnell2015]. Given markets are shown not to be efficient in practice, we can conclude that non-systematic risk is in fact a determinant of market returns. This is supported by existing literature identifying non-systematic anomalies such as the size effect [@Banz1981] and value effect [@Basu1983], both of which are shown to have reliable predictive power in explaining returns.  Sources of non-systematic risk can be difficult to quantify, but may relate to the extent to which a portfolio is diversified.  While investors may choose to diversify across a number of metrics present in the literature such as size, value or leverage, the degree of  association between companies remains a critical metric reliant on analyst insights.  Association can come from companies sharing similar industries, sentiment, status, position in analyst insight or subsidiary relationship.  One challenge is how to both extract and quantify these measures in a way that is both unbiased, scalable and computationally tractable.  We propose a method, using dynamic document-vectors learned from a corpus derived from a 30-day news cycles in order to quantify the association between companies in a portfolio.  
   
 This paper suggests an alternative risk metric to Beta known as “association risk” which measures the amount of association between companies within a portfolio and hence its associated level of diversification. This is achieved through the use sentiment analysis to form rich vector representations of companies. Portfolios are then formed at random using the sum of the distances between the companies in vector space. Portfolios of greater sum distances imply less association between companies and hence greater portfolio diversification. This paper shows that portfolios with greater level of diversification exhibit lower levels of volatility and therefore lower levels of risk.
   
@@ -30,7 +30,8 @@ Association is calculated as the inverse of the sum of the cosine distances betw
   
 This paper is organised as follows. Section 2 reviews the literature on Natural Language Processing. Section 3 details the data, exploratory analysis and method. In the exploratory analysis, this paper compares four different techniques in drawing association between companies on the JSE, namely LDA, LSI, Word2Vec and Doc2Vec. Section 4 contains the results of this study and is split into two main sections being Date ANCOVA and Portfolio ANCOVA, presenting our findings in a detailed discussion. Finally in Section 5, we summarise and conclude our findings.
   
-                
+   
+\newpage             
 # Literature Review   
   
 The realm of Natural Language Processing (NLP) has seen increased application in recent years with the growth of new techniques, datasets and computing capacity [@Sohangir2018, @OLeary2009, @Cortis2017]. In English, different words and phrases can share or have different meanings.  A key challenge of NLP comes in how to group these words and phrases in a way which is automated and efficient.  
@@ -41,7 +42,7 @@ Unsupervised techniques for dimensionality reduction have been popular extension
   
 In a paper by @Bengio2003, a feed-forward neural network is used with one hidden layer to predict a word's skip-gram [@Alexandrescu2006].  Using the output of this hidden layer, @Bengio2003 demonstrate the value of this approach in extracting rich word-vectors which accurately capture the semantic meaning of words in a continuous vector space.  While this technique remains tractable on small datasets and dictionaries, a breakthrough came with @Mikolov2013a and @Mikolov2013b who used negative sampling on words' skip-grams as a tool to re-parameterize the model into something more computationally tractable [@Goldberg2014].  This technique has been extended by @Quoc2014 in a method commonly referred to as Doc2Vec, which aims to find documents representations by using the same negative sample technique discussed by @Mikolov2013b.  
   
-Word2vec, introduced by @Mikolov2013a, is seen to be a very popular technique across Machine Learning Methodologies for its ability to create state-of-the-art word embeddings. Word2vev is a neural network method used to produce high-dimensional vector representations of each word or document in a vector space. Locations of the words relevant to each other in the vector space determine the semantic relationships between the words and Word2Vec is able to capture sentiment based similarity between words. Word2vec can be implemented using continuous Bag-of-Words (CBOW)  and skip-gram approaches. In the original study the quality of vector representations was evaluated using an analogical reasoning task [@Mikolov2013a]. This used five types of semantic language questions and nine types of syntactic questions. The questions were created firstly by manually pairing lists of similar words and thereafter questions were created by connecting two pairs. For example, a list of 68 american cities and the states they belong to was made. The question was correctly answered if the closest word to the vector computed is the same as the question. Questions were correctly answered with an accuracy of around 60% [@Mikolov2013a]. In a follow-up study using the same analogical reasoning task [@Mikolov2013a], @Mikolov2013b used the skip-gram model accompanied by various new efficiency techniques such as negative sampling, hierarchical softmax and the subsampling of frequent words which markedly improved results with an accuracy of 72%. 
+Word2Vec, introduced by @Mikolov2013a, is seen to be a very popular technique across Machine Learning Methodologies for its ability to create state-of-the-art word embeddings. Word2Vec is a neural network method used to produce high-dimensional vector representations of each word or document in a vector space. Locations of the words relevant to each other in the vector space determine the semantic relationships between the words and Word2Vec is able to capture sentiment based similarity between words. Word2Vec can be implemented using continuous Bag-of-Words (CBOW)  and skip-gram approaches. In the original study the quality of vector representations was evaluated using an analogical reasoning task [@Mikolov2013a]. This used five types of semantic language questions and nine types of syntactic questions. The questions were created firstly by manually pairing lists of similar words and thereafter questions were created by connecting two pairs. For example, a list of 68 American cities and the states they belong to was made. The question was correctly answered if the closest word to the vector computed is the same as the question. Questions were correctly answered with an accuracy of around 60% [@Mikolov2013a]. In a follow-up study using the same analogical reasoning task [@Mikolov2013a], @Mikolov2013b used the skip-gram model accompanied by various new efficiency techniques such as negative sampling, hierarchical softmax and the subsampling of frequent words which markedly improved results with an accuracy of 72%. 
   
 Whilst Word2Vec has shown success in these  applications [@Mikolov2013a, @Mikolov2013b], its use in the prediction of both sentiment and stock price has shown limited success [@Quoc2014, @Cortis2017, @Sohangir2018]. While many explanations may exist for these findings, one primary reason can be drawn from the technique itself;  while negative sampling methods do provide semantically meaningful word embeddings in a high dimensional vector space, there exists no surety that some function exists to map these word vectors to some sentiment domain, given that these embeddings are trained on context rather than sentiment. Additionally, parsing is an issue when sentiments associated with words becomes too rich, forming knots.
   
@@ -49,18 +50,18 @@ With the growing complexity of quantitative techniques in price prediction , the
   
 The problem with association-based metrics has been the difficulty of extracting association from large data sets of news and research reports as many techniques that try to compute association do not scale to large corpora. Word2Vec scales on text data thanks to its feed-forward neural network re-parameterization and use of skip-grams, we propose a technique which derives an association based portfolio risk metric using unstructured data, using both news articles and analyst reports.
   
-
+\newpage
 # Data, Exploratory Analysis and Method  
 ## Data  
   
 This paper uses news articles obtained from multiple online sources, as shown in Table 1. These websites were scraped for articles containing a predefined dictionary of company names from the Johannesburg Stock Exchange (JSE).  Articles were scraped as at 12 July 2018, using the Scrapy html parsing library and stored in comma separated files.  The articles were then grouped by day, before being grouped into sets of 30-day news cycles, ensuring the proper alignment of calendar days against trading days.  
   
-Total Index Return was used in this study as a robust measure of price in order to account for the effect of dividend payments. Price data was sourced using the Reuters Datastream Service from companies on the Johannesburg Stock Exchange between 16 May 2003 and 17 May 2018.  A total of 82 of the 174 JSE stocks were used due of volume of articles for companies and access to their descriptions. 
+Total Index Return was used in this study as a robust measure of price in order to account for the effect of dividend payments. Price data was sourced using the Reuters Datastream Service from companies on the Johannesburg Stock Exchange between 16 May 2003 and 17 May 2018.  A total of 82 of the 174 JSE stocks were used due to the volume of articles for particular companies and access to realiable descriptions. 
   
 ## Exploratory Analysis    
   
 
-A number of techniques remain popular within the literature of NLP. These include LDA, LSI, Doc2Vec and Word2Vec amongst others. In the following section we analyze these four techniques and aim to visualize their data in order to asses their power in drawing association between companies on the JSE. 
+A number of techniques remain popular within the literature of NLP. These include LDA, LSI, Doc2Vec and Word2Vec amongst others. In the following section we analyze these four techniques and aim to visualize their data in order to assess their power in drawing association between companies on the JSE. 
   
 Models are first trained on a fixed dataset of company descriptions. Document vectors are then computed using these various models representing each company. Two techniques were used in order to visualize these 100-dimensional document vectors, namely t-distributed Stochastic Neighbour Embedding (tSNE), a popular manifold embedding technique, and Scaling by Majorizing a Complicated Function (SMACOF), a self organizing map technique which uses a stress measure in order to create a lower dimensional representation of data which maintains the distances between document vectors. Word2Vec is computed using cosine distances and Doc2Vec, LSI and LDA are computed using Euclidean distances.
    
@@ -77,13 +78,14 @@ When comparing Word2Vec against other techniques we see striking differences. Th
 
 When assessing Doc2Vec we see the problem of excess noise from article words whose weighting cannot be reduced in the same way TFIDF does with Word2Vec, as TFIDF provides more stable and accurate word vectors is given the size of the corpus. 
   
-One reason for the use of Word2Vec over other benchmark techniques is its ability to provide rich explanation to analysts, its strong use within the literature and its power in conjunction with many other techniques such as TFIDF in order to produce documents vectors. Word2Vec is thus used as the primary technique for the remainder of this paper.
+Reasons for the use of Word2Vec over other benchmark techniques are in its ability to provide rich explanation to analysts, its strong use within the literature and its power in conjunction with many other techniques such as TFIDF in order to produce documents vectors. Word2Vec is thus used as the primary technique for the remainder of this paper.
+  
   
 ## Method  
      
 ### Simplified Method  
   
-Data is sourced from online news articles and grouped into 30-day news-cycles. A numeric representation for each word in each article is then computed. Using a description of each company, we take a weighted sum of each word’s numeric representation to compute numeric representations for each company. The companies are randomly assigned to 1000 portfolios, each consisting of 15 stocks. We calculate the inverse of the sum of cosine distance between the stocks in the portfolio to measure the level of similarity between each company. These distances are then summed for each portfolio to calculate a measure of similarity between all companies in a portfolio, which we call association.  This metric of association is then used as a measure of portfolio diversification and compared to the volatility of the portfolio over the the next 30 days.
+Data is sourced from online news articles and grouped into 30-day news-cycles. A numeric representation for each word in each article is then computed. Using a description of each company, we take a weighted sum of each word’s numeric representation to compute numeric representations for each company. The companies are randomly assigned to 1000 random portfolios, each consisting of 15 stocks. We calculate the inverse of the sum of cosine distance between the stocks in the portfolio to measure the level of similarity between each company. These distances are then summed for each portfolio to calculate a measure of similarity between all companies in a portfolio, which we call association.  This metric of association is then used as a measure of portfolio diversification and compared to the volatility of the portfolio over the the next 30 days.
   
 ### Use of Portfolios vs Single Stocks  
   
@@ -92,10 +94,11 @@ We are using portfolios to analyse risk rather than single stocks for two reason
 
 ### Data Preprocessing   
   
-|             | __Python Computation__ |                                              |  
-|:-----------:|:------------------:|:--------------------------------------------:|  
-|   Software  |     Python 3.6     |               Random seed of 42              |  
-| Computation |    Dask Library    | 15 cores, 15 nodes and 30 gigabytes per node |  
+|             | __Python Computation__ |                        |  
+|:-----------:|:----------------------:|:----------------------:|  
+|   Software  |     Python 3.6         | Random seed of 42      |  
+| Computation |    Dask Library        | 15 cores, 15 nodes and | 
+|             |                        | 30 gigabytes per node  |  
   
 Articles were preprocessed by standardizing the text to unicode characters, before transforming the text into lower-case and removing all punctuation and numeric characters.  The articles were also preprocessed to remove common stop words in this step.  These stopwords were sourced from the common Scikit-Learn library and included words like “the’’, “their”, “then” and “a”, among others.  A full list of packages versions is provided in the appendix.  
   
@@ -136,6 +139,7 @@ $$\text{H}_{1}: \beta_{0} = 0 $$
     
 Where $\beta_{1}$ is a measure of association of a given portfolio at a point in time.  
     
+\newpage
 # Results and discussion  
 ## Volume and association  
     
@@ -147,7 +151,7 @@ In analysing news volume over time it is clear that the volume of news articles 
 ![Association](../experiments/media/Association Over Time.png)  
 <center>__Figure 4: Association__</center> 
   
-Volatility details the standard deviation of portfolios over time. Figure 5 details the 300-day volatility of returns across 1000 random evenly weighted portfolios between 16 May 2003 and 17 May 2018.  When assessing volatility over time the influence of macroeconomic events such as the financial crisis in 2008 and the South African “Zuma-gate scandal” of 2016 are attributed to the spikes in portfolio volatility.  
+Volatility details the standard deviation of portfolios over time. Figure 5 shows the 300-day volatility of returns across 1000 random evenly weighted portfolios between 16 May 2003 and 17 May 2018.  When assessing volatility over time the influence of macroeconomic events such as the financial crisis in 2008 and the South African “Zuma-gate scandal” of 2016 are attributed to the spikes in portfolio volatility.  
 
 ![Volatility](../experiments/media/Volatility Over Time time.png)  
 <center>__Figure 5: Volatility__</center> 
@@ -181,29 +185,33 @@ In order to understand why these results may be insignificant we analyse the dis
   
   
   
-|                   |               | __Table 2__|        |                   |            |        |  
-|-------------------|---------------|---------|--------|-------------------|------------|--------|  
-| Dep. Variable     | y             |         |        | R-squared         | 0.004      |        |  
-| Method:           | Least Squares |         |        | Adj. R-squared    | 0.003      |        |  
-| No. Observations: | 1000          |         |        | F-statistic       | 4.486      |        |  
-| DF Residuals:     | 998           |         |        | Prob(F-statistic) | 0.0344     |        |  
-| Df Model:         | 1             |         |        | Log-likelihood    | 5684.4     |        |  
-| Covariance type   | non-robust    |         |        | AIC:              | -1.136e+04 |        |  
-|                   |               |         |        | BIC:              | -1.136e+04 |        |  
-|                   |               |         |        |                   |            |        |  
-|                   | Coef          | std err | t      | $p>|t|$            | [0.025      0.975] |  
-| constant          | 0.0058        | 0.000   | 32.799 | 0.000             | 0.005      | 0.006  |  
-| X1                | 0.0064        | 0.003   | 2.118  | 0.034             | 0.000      | 0.012  |  
+|                   |  __Table 2__  |                   |            |  
+|-------------------|---------------|-------------------|------------|  
+| Dep. Variable     | y             | R-squared         | 0.004      |  
+| Method:           | Least Squares | Adj. R-squared    | 0.003      |  
+| No. Observations: | 1000          | F-statistic       | 4.486      |  
+| DF Residuals:     | 998           | Prob(F-statistic) | 0.0344     |  
+| Df Model:         | 1             | Log-likelihood    | 5684.4     |  
+| Covariance type   | non-robust    | AIC:              | -1.136e+04 |  
+|                   |               | BIC:              | -1.136e+04 |  
+|                   |               |                   |            |  
+|                   | Coef          | std err           | t          |  
+| constant          | 0.0058        | 0.000             | 32.799     |  
+| X1                | 0.0064        | 0.003             | 2.118      |  
+|                   |               |                   |            |  
+|                   | p>\|t\|       |\[0.025            | 0.975\]    |  
+| constant          | 0.000         | 0.005             | 0.006      |  
+| X1                | 0.034         | 0.000             | 0.012      |  
    
   
 
 Due to the preceding results we are inclined to believe that portfolios comprise of many sources of volatility which arise in the inclusion of a particular share with high volatility, market microstructure or a variety of other effects.  In order to further explore the relationship between association  and volatility we propose the analysis of portfolios over time, a method by which to control for these factors affecting the volatility of a specific portfolio.
   
-We propose looking at ANCOVA  across time in particular portfolios, “Portfolio ANCOVA”,  which will isolate our volatility factor, in order to find a trend in the data when accessing volatility and residuals.
+We propose looking at ANCOVA  across time in particular portfolios, “Portfolio ANCOVA”,  which will isolate our volatility factor, in order to find a trend in the data when assessing volatility and residuals.
   
 ## Portfolio ANCOVA  
   
-The Portfolio ANCOVA coefficients, observed in Figure 10, are reasonably uniformly distributed, are all positive and lie in a reasonable range which suggests that the model is significant.  The same can be said for the ANCOVA constant x-values which exhibit similar traits, in Figure 11. The coefficient p-value plot (figure something 12) shows that for the majority of time periods the portfolios are significant at the 1% level with fewer portfolios significant at the the 5% level. This is sufficient evidence to reject the null hypothesis that conclude that $\beta_{1}$ is not equal to 0 which means that the coefficients will add to variation in volatility. This provides evidence that there is covariance in coefficients but does not explain the magnitude of the coefficients.
+The Portfolio ANCOVA coefficients, observed in Figure 10, are reasonably uniformly distributed, are all positive and lie in a reasonable range which suggests that the model is significant.  The same can be said for the ANCOVA constant x-values which exhibit similar traits, in Figure 11. The coefficient p-value plot, in Figure 9 of the Appendix, shows that for the majority of time periods the portfolios are significant at the 1% level with fewer portfolios significant at the the 5% level. This is sufficient evidence to reject the null hypothesis that conclude that $\beta_{1}$ is not equal to 0 which means that the coefficients will add to variation in volatility. This provides evidence that there is covariance in coefficients but does not explain the magnitude of the coefficients.
 
 ![Coefficients Across Time Within Portfolios](../experiments/media/Coefficeint value with constant accross portfolio.png)    
 <center>__Figure 10: Coefficients Across Time Within Portfolios__</center>  
@@ -218,7 +226,7 @@ The Portfolio ANCOVA coefficients, observed in Figure 10, are reasonably uniform
   
 
 
-In order to understand why these results may be significant we analyse the distribution of a portfolio over time, this being the 500th portfolio. We assess association and how it affects volatility and residuals. In these plots there is a definite trend. In the Figure 13 there is a clear clustering of days where both association and volatility are low and the density of days decreases as both volatility and association increase. The residuals plot, shown in Figure 14, is similar with a large cluster at an association below 0.1 and thinning out as association increases. This suggests a positive relationship between association and volatility. With an R-squared value of 0.068, this is not much better than the previous method but it is improved which shows greater explanation of volatility by association, on average. The telling statistic is the t-stat, which in this method is sufficiently large enough for the coefficient and the constant, making p-values significantly small. 
+In order to understand why these results may be significant we analyse the distribution of a portfolio over time, this being the 500th portfolio. We assess association and how it affects volatility and residuals. In these plots there is a definite trend. In Figure 13 there is a clear clustering of days where both association and volatility are low and the density of days decreases as both volatility and association increase. The residuals plot, shown in Figure 14, is similar with a large cluster at an association below 0.1 and thinning out as association increases. This suggests a positive relationship between association and volatility. With an R-squared value of 0.068, this is not much better than the previous method but it is improved which shows greater explanation of volatility by association, on average. The telling statistic is the t-stat, which in this method is sufficiently large enough for the coefficient and the constant, making p-values significantly small. 
 
 ![Scatter Plot of Association and Volatility of the 500th Portfolio](../experiments/media/Scatter Plot of 500th Portofolio.png)  
 <center>__Figure 13: Scatter Plot of Association and Volatility of the 500th Portfolio__</center>    
@@ -228,19 +236,24 @@ In order to understand why these results may be significant we analyse the distr
 <center>__Figure 14: Scatter Plot of Association and Residuals of the 500th Portfolio__</center>   
   
   
-|                   |               | table 3 |        |                   |            |        |  
-|-------------------|---------------|---------|--------|-------------------|------------|--------|  
-| Dep. Variable     | y             |         |        | R-squared         | 0.068      |        |  
-| Method:           | Least Squares |         |        | Adj. R-squared    | 0.068      |        |  
-| No. Observations: | 2058          |         |        | F-statistic       | 150.8      |        |  
-| DF Residuals:     | 2056          |         |        | Prob(F-statistic) | 1.70e-33   |        |  
-| Df Model:         | 1             |         |        | Log-likelihood    | 9334.1     |        |  
-| Covariance type   | non-robust    |         |        | AIC:              | -1.866e+04 |        |  
-|                   |               |         |        | BIC:              | -1.865e+04 |        |  
-|                   |               |         |        |                   |            |        |  
-|                   | Coef          | std err | t      | $p>|t|$            | [0.025     | 0.975] |  
-| constant          | 0.0075        | 0.000   | 72.687 | 0.000             | 0.007      | 0.008  |  
-| X1                | 0.0114        | 0.001   | 12.279 | 0.000             | 0.010      | 0.013  |  
+|                   | __Table 3__   |                   |            |  
+|-------------------|---------------|-------------------|------------|  
+| Dep. Variable     | y             | R-squared         | 0.068      |  
+| Method:           | Least Squares | Adj. R-squared    | 0.068      |  
+| No. Observations: | 2058          | F-statistic       | 150.8      |  
+| DF Residuals:     | 2056          | Prob(F-statistic) | 1.70e-33   |  
+| Df Model:         | 1             | Log-likelihood    | 9334.1     |  
+| Covariance type   | non-robust    | AIC:              | -1.866e+04 |  
+|                   |               | BIC:              | -1.865e+04 |  
+|                   |               |                   |            |  
+|                   | Coef          | std err           | t          |   
+| constant          | 0.0075        | 0.000             | 72.687     |  
+| X1                | 0.0114        | 0.001             | 12.279     |  
+|                   |               |                   |            |  
+|                   | p>\|t\|       | \[0.025           | 0.975\]    |  
+| constant          | 0.000         | 0.007             | 0.008      |  
+| X1                | 0.000         | 0.010             | 0.013      |  
+|                   |               |                   |            |  
   
 ## Incorporation of blocking  
   
@@ -254,26 +267,35 @@ Where $t$ represents a trading day in our dataset and $c$ represents the compani
 Given the number of data points, a stratified sample of our data was taken in order to fit this model.  The results are shown in the table below:
     
 
-|                   |                  | table 4    |          |                   |            |        |  
-|-------------------|------------------|------------|----------|-------------------|------------|--------|  
-| Dep. Variable     | y                |            |          | R-squared         | 0.794      |        |  
-| Method:           | Least Squares    |            |          | Adj. R-squared    | 0.790      |        |  
-| No. Observations: | 123450           |            |          | F-statistic       | 182.6      |        |  
-| DF Residuals:     | 120899           |            |          | Prob(F-statistic) | 0.000      |        |  
-| Df Model:         | 2550             |            |          | Log-likelihood    | 6.2152e+05 |        |  
-| Covariance type   | non-robust       |            |          | AIC:              | -1.238e+64 |        |  
-| Date              | Mon, 17 Sep 2018 |            |          | BIC:              | -1.213e+06 |        |  
-| Time              | 23:56:13         |            |          |                   |            |        |  
-|                   | Coef             | std err    | t        | $p>|t|   $          | [0.025     | 0.975] |  
-| Association       | 0.007            | 0.000      | 3.529    | 0.000             | 0.000      | 0.001  |  
-| ...               |                  |            |          |                   |            |        |  
-| Constant          | 0.0024           | 4.84e-06   | 500.510  | 0.000             | 0.002      | 0.002      |  
-|                   |                  |            |          |                   |            |        |  
-| Omnibus:          | 25356.151        | Skew:      | 0.933    | Dubin-Watson      | 1.999      |          |  
-| Prob(Omnibus):    | 0.000            | Kurtosis:  | 7.402    | Jarque-Bera (JB): |117583.806 |        |
-| Prob(JB):         | 0.000            | Cond. No.  | 1.72e+17 |                   |            |        |  
-
-
+|                   |  __Table 4__     |                   |            |  
+|-------------------|------------------|-------------------|------------|  
+| Dep. Variable     | y                | R-squared         | 0.794      |  
+| Method:           | Least Squares    | Adj. R-squared    | 0.790      |  
+| No. Observations: | 123450           | F-statistic       | 182.6      |  
+| DF Residuals:     | 120899           | Prob(F-statistic) | 0.000      |  
+| Df Model:         | 2550             | Log-likelihood    | 6.2152e+05 |  
+| Covariance type   | non-robust       | AIC:              | -1.238e+64 |  
+| Date              | Mon, 17 Sep 2018 | BIC:              | -1.213e+06 |  
+| Time              | 23:56:13         |                   |            |  
+|                   |                  |                   |            |  
+|                   | Coef             | std err           | t          |  
+| Association       | 0.007            | 0.000             | 3.529      |  
+| ...               |                  |                   |            |  
+| Constant          | 0.0024           | 4.84e-06          | 500.510    |  
+|                   |                  |                   |            |  
+|                   | p>\|t\|          | \[0.025           | 0.975\]    |  
+| Association       | 0.000            | 0.000             | 0.001      |  
+| ...               |                  |                   |            |  
+| Constant          | 0.000            | 0.002             | 0.002      |  
+|                   |                  |                   |            |  
+| Omnibus:          | 25356.151        | Skew:             | 0.933      |  
+| Prob(Omnibus):    | 0.000            | Kurtosis:         | 7.402      |  
+| Prob(JB):         | 0.000            | Cond. No.         | 1.72e+17   |  
+|                   |                  |                   |            |  
+| Dubin-Watson      | 1.999            |                   |            |  
+| Jarque-Bera (JB): |117583.806        |                   |            |  
+|                   |                  |                   |            |  
+  
       
 From the 120899 observations, we can observe a constant value of  0.0024 and an association coefficient of 0.0007, both significant at the 0.1% level, with t-scores of  500.510 and 3.529 respectively.  This model demonstrates a $R^2$ value of 0.794 and joint-significance of 182.6 which is significant at the 0.1% level using Fisher’s F-statistic. If we then analyze the residuals of this model, shown in Figure 15, we observe their distribution as both symmetric and distributed around 0, with little correlation to association, shown in Figure 15.  These properties are crucial to Gauss-Markov Assumptions of Ordinary Least Squares Linear Regression and the use of these estimates as an unbiased linear estimator of portfolio variance.  The p-values of our date coefficient under the null hypothesis $\beta_{t} = 0$ are both significant and insignificant at points in time, suggesting the effect of exogenous shocks to our model, shown in Figure 17.  Despite these findings, we see using blocking to control for a share’s excess volatility, demonstrating significant p-values at the 0.001% level using the student t-distribution, providing strong argument for their use in this blocking design, shown in Figure 18.  
 
@@ -294,7 +316,7 @@ From the 120899 observations, we can observe a constant value of  0.0024 and an 
   
   
   
-
+\newpage
 # Conclusions  
 
 CAPM states systematic risk to be the sole risk determinant of returns, given efficient markets, where non-systematic risk is perfectly diversifiable. In reality however, markets are shown not to perfectly efficient. Given this lack of efficiency it holds that investments are subject to non-systematic risk, such as the size and value effect. This paper contributes to the existing literature, offering association risk as a portfolio specific anomaly identifying the level of diversification within a portfolio and hence its volatility in the market. 
@@ -317,19 +339,19 @@ Where:
   
 
 ## Word2Vec  
-The easiest way to think about word2vec is that it figures out how to place words on a “chart” in such a way that their location is determined by their meaning, called a vector-space. This means that words with similar meanings will be clustered together. I.e.: Words with semantic relationships will be closer together than words without such relationships. Word2vec is a three-layer neural network with one input, one hidden and an output layer. Word2vev can utilize Continuous bag of words (CBOW) or continuous skip-gram architecture. The idea of CBOW (continuous bag-of-words) architecture, the Word2vec algorithm we are using, is to learn word representations that can predict a word given its surrounding words. The input layer corresponds to signals for surrounding words and output layer correspond to signals for predicted target word. Suppose, you have an input sentence: “The cat sat on the mat”. The aim is to learn representation for words “the”, ‘’cat”, “sat” etc. To this end, the neural network tries to learn features (weights W and W') which look at words in a window, say “The cat sat” and try to predict the next word, “on”. Hence, with input as the “the”, ‘’cat”, ‘’sat”, the training process adjusts the weight of the network, so that the probability of output “on” is maximized, as compared to other words in the vocabulary. As the training procedure repeats this process over large number of sentences or phrases, the weights “stabilize”. These weights are then used as the vectorized representations of words.  
+The easiest way to think about word2Vec is that it figures out how to place words on a “chart” in such a way that their location is determined by their meaning, called a vector-space. This means that words with similar meanings will be clustered together. I.e.: Words with semantic relationships will be closer together than words without such relationships. Word2Vec is a three-layer neural network with one input, one hidden and an output layer. Word2Vec can utilize Continuous bag of words (CBOW) or continuous skip-gram architecture. The idea of CBOW (continuous bag-of-words) architecture, the Word2Vec algorithm we are using, is to learn word representations that can predict a word given its surrounding words. The input layer corresponds to signals for surrounding words and output layer correspond to signals for predicted target word. Suppose, you have an input sentence: “The cat sat on the mat”. The aim is to learn representation for words “the”, ‘’cat”, “sat” etc. To this end, the neural network tries to learn features (weights W and W') which look at words in a window, say “The cat sat” and try to predict the next word, “on”. Hence, with input as the “the”, ‘’cat”, ‘’sat”, the training process adjusts the weight of the network, so that the probability of output “on” is maximized, as compared to other words in the vocabulary. As the training procedure repeats this process over large number of sentences or phrases, the weights “stabilize”. These weights are then used as the vectorized representations of words.  
   
+\newpage
+## Word2Vec  
 
-## Word2vec  
-
-![Word2vec CBOW](../experiments/media/Word2Vec CBOW.png)
+![Word2Vec CBOW](../experiments/media/Word2Vec CBOW.png)
 
 [@Mikolov2013a]  
 
 The CBOW architecture predicts the current word based on context of a given word.  
 
   
-![Simplified Word2vec](../experiments/media/Word2vec simplified.png)  
+![Simplified Word2Vec](../experiments/media/Word2vec simplified.png)  
   
 This diagram outlines the vector relationship maintained through the use of word embeddings.  
 king - man + woman = queen  
@@ -343,7 +365,7 @@ Negative-sampling is a method by which samples are drawn outside a given distrib
 ## Doc2Vec  
   
 
-Doc2Vec is an adaption of Word2vec but instead of generating relationships between words it generates relationships between paragraphs, sentences and documents. Again, there is a three-layer neural network with an input, a hidden and an output layer. The difference is that in the input layer there is now a signal for the document as well as the signals for surrounding words which is what makes the distinction between documents. The output layer, again, corresponds to signals predicting target words.  
+Doc2Vec is an adaption of Word2Vec but instead of generating relationships between words it generates relationships between paragraphs, sentences and documents. Again, there is a three-layer neural network with an input, a hidden and an output layer. The difference is that in the input layer there is now a signal for the document as well as the signals for surrounding words which is what makes the distinction between documents. The output layer, again, corresponds to signals predicting target words.  
   
 
 
@@ -363,12 +385,10 @@ Latent Semantic Indexing (LSI)is a technique of analysing relationships between 
 'ACL', 'AEG', 'AEL', 'AFE', 'AFX', 'AGL', 'AMS', 'ANG', 'APN', 'ARI', 'ASR', 'AVI', 'AXL', 'BAT', 'BAW', 'BGA', 'BIL', 'BVT', 'CAT', 'CLS', 'CML', 'CPI', 'DRD', 'DST', 'DSY', 'DTA', 'DTC', 'EOH', 'EXX', 'FBR', 'FSR', 'GFI', 'GND', 'HAR', 'HCI', 'IMP', 'INL', 'INP', 'IPL', 'KAP', 'LBH', 'LON', 'MMI', 'MRF', 'MRP', 'MSM', 'MTN', 'MUR', 'NED', 'NHM', 'NPK', 'NPN', 'NTC', 'OCE', 'OML', 'OMN', 'PBG', 'PIK', 'PPC', 'PSG', 'RCL', 'REM', 'RLO', 'RMH', 'SAP', 'SBK', 'SHP', 'SLM', 'SNH', 'SNT', 'SOL', 'SPG', 'SUI', 'TBS', 'TFG', 'TKG', 'TON', 'TRE', 'TRU', 'TSH', 'WBO' and 'WHL'.    
   
 
-
+\newpage
 # SMACOF  
   
-
-
-$$\sigma(X) = \sum_{i<j<n} w_{i,j} (d_{i,j}(X)-\delta_{i,j})^2 =\sum_{i<j}(w_{i,j} \delta_{i,j}^2) + \sum_{i<}w_{i,j} d_{i,j}^2 (X) - 2 \sum_{i<j}w_{i,j} \delta_{i,j} d_{i,j}(X)$$
+$$\sigma(X) = \sum_{i<j<n} w_{i,j} (d_{i,j}(X)-\delta_{i,j})^2$$
   
 SMACOF uses an algorithm called majorizing to minimise stress functions. Strictly speaking majorization is not an algorithm but rather an approach to constructing optimization algorithms. The principle of majorization is to construct a surrogate function which majorizes/minimizes a particular function. In some optimizations problems, the objective-function is just too complicated to evaluate directly at every iteration. Surrogate functions are constructed to mimic most of the properties of the true objective-function, but that is much simpler analytically and/or computationally.   
   
@@ -386,9 +406,9 @@ t-SNE  is a tool to visualize high-dimensional data. It converts similarities be
   
 ## Exploratory Data Analysis Plots  
   
-![Doc2vec t-SNE](../experiments/media/Doc2Vec TSNE.png)  
+![Doc2Vec t-SNE](../experiments/media/Doc2Vec TSNE.png)  
   
-![Doc2vec SMACOF](../experiments/media/Doc2Vec SMACOF.png)  
+![Doc2Vec SMACOF](../experiments/media/Doc2Vec SMACOF.png)  
   
 ![LDA SMACOF](../experiments/media/LDA SMACOF.png)  
   
