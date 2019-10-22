@@ -45,7 +45,7 @@ jupyter lab --no-browser --port=8889 & ssh -R8888:localhost:8889 hex.uct.ac.za
   
 Then from local machine  
 ```bash
-ssh -L 8889:localhost:8888 gwrmar002@hex.uct.ac.za
+ssh -L 8889:localhost:8888 USERNAME@hex.uct.ac.za
 ```
 
 
